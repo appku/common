@@ -1,0 +1,56 @@
+{
+    "name": "@appku/common",
+    "version": "0.1.0",
+    "description": "Na",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:appku/common.git"
+    },
+    "bugs": {
+        "url": "https://github.com/appku/stashku/issues"
+    },
+    "keywords": [
+        "utilities",
+        "utils",
+        "common"
+    ],
+    "author": "AppKu",
+    "license": "MS-PL",
+    "type": "module",
+    "main": "stashku.js",
+    "scripts": {
+        "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose --coverage",
+        "test-ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose -ci",
+        "lint": "npx eslint ./",
+        "docs": "npx jsdoc -c jsdoc.json -u tutorials --readme README.md",
+        "serve-docs": "npx serve ./docs",
+        "cli": "node cli/main.js"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "testPathIgnorePatterns": [
+            "/test/",
+            "/node_modules/",
+            "/pluralize"
+        ],
+        "coveragePathIgnorePatterns": [
+            "/test/"
+        ]
+    },
+    "engines": {
+        "node": ">=14"
+    },
+    "devDependencies": {
+        "@appku/jsdoc-template": "^1.1.9",
+        "@types/jest": "^27.5.2",
+        "eslint": "^8.57.1",
+        "eslint-plugin-jest": "^26.9.0",
+        "jest": "^27.5.1",
+        "jest-fetch-mock": "^3.0.3",
+        "jsdoc": "^3.6.11",
+        "jsdoc-plugin-intersection": "^1.0.4",
+        "jsdoc-plugin-typescript": "^2.3.0",
+        "jsdoc-plugin-typescript-new": "^1.0.0",
+        "serve": "^14.2.4"
+    }
+}
