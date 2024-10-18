@@ -17,7 +17,7 @@
     "author": "AppKu (https://appku.com)",
     "license": "MS-PL",
     "type": "module",
-    "main": "stashku.js",
+    "main": "index.js",
     "scripts": {
         "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose --coverage",
         "test-ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose -ci",
