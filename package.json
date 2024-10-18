@@ -1,7 +1,7 @@
 {
     "name": "@appku/common",
     "version": "0.1.0",
-    "description": "Na",
+    "description": "AppKu's official public common library of utilities.",
     "repository": {
         "type": "git",
         "url": "git@github.com:appku/common.git"
@@ -14,7 +14,7 @@
         "utils",
         "common"
     ],
-    "author": "AppKu",
+    "author": "AppKu (https://appku.com)",
     "license": "MS-PL",
     "type": "module",
     "main": "stashku.js",
@@ -23,8 +23,7 @@
         "test-ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose -ci",
         "lint": "npx eslint ./",
         "docs": "npx jsdoc -c jsdoc.json -u tutorials --readme README.md",
-        "serve-docs": "npx serve ./docs",
-        "cli": "node cli/main.js"
+        "serve-docs": "npx serve ./docs"
     },
     "jest": {
         "testEnvironment": "node",
