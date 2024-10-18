@@ -9,7 +9,7 @@ You can generate a static JSDoc site under the `docs/` path using the command `n
 
 # Installing
 ```sh
-npm i @appku/secure
+npm i @appku/common
 ```
 
 # Testing
