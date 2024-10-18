@@ -1,9 +1,5 @@
-# Secure
-This is a utility library for the AppKu ecosystem which provides cryptographic and related functionality to the various tools and applications in AppKu.
-
-# Running
-This is the core StashKu package and doesn not provide a CLI interface, as it is meant to be leveraged as a package. See the 
-[StashKu Migrate](https://github.com/appku/stashku-migrate) for the `stashku` CLI tool.
+# Common
+This is a utility library for the AppKu ecosystem which provides string, cryptographic, and other utility functionality to the various tools and applications in AppKu.
 
 # Configuration
 This library does not have any configuration options.
