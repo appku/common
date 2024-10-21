@@ -147,3 +147,15 @@ describe('.indent', () => {
         expect(Strings.indent('hello\nworld\n    howdy', 1, 2, '**')).toBe('hello\n**world\n**    howdy');
     });
 });
+
+describe('.title', () => {
+    it('makes each word capitalized.', () => {
+        expect(Strings.title('hello')).toBe('Hello');
+        expect(Strings.title('BOB R. GOBMANG')).toBe('Bob R. Gobmang');
+        expect(Strings.title('bob r. gobmang')).toBe('Bob R. Gobmang');
+        expect(Strings.title('bOb R. GobmAnG')).toBe('Bob R. Gobmang');
+    });
+    it('captalizes diacritics.', () => {
+        expect(Strings.title('ångus St3ak is\' gÚÚd!')).toBe('Ångus St3ak Is\' Gúúd!');
+    });
+});

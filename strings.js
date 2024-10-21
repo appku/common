@@ -224,6 +224,23 @@ const Strings = {
             });
         }
         return input;
+    },
+
+    /**
+     * Converts a string to title case, where each word and segment has the first character capitalized.
+     * @param {String} input - The string to convert to title-case.
+     * @returns {String}
+     * @example
+     * ```js
+     * Strings.title('this IS_a.bunch-OF words.');
+     * //"This Is_A.Bunch-Of Words"
+     * ```
+     */
+    title: function (input) {
+        return input.toLowerCase().replace(/[^\s_'-]+/g,
+            (word) => {
+                return word.replace(/^./, (firstLetter) => firstLetter.toUpperCase());
+            });
     }
 
 };
