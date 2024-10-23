@@ -1,5 +1,20 @@
 import Strings from './strings.js';
 
+describe('.ssplit', () => {
+    it('handles nulls.', () => {
+        expect(Strings.ssplit(null)).toBeNull();
+    });
+    it('splits complex lists cleanly.', () => {
+        expect(Strings.ssplit('this;is,an\ninput,of,sorts;or;is it;;;,,,')).toEqual([
+            'this', 'is', 'an',
+            'input', 'of', 'sorts',
+            'or', 'is it', '',
+            '', '', '',
+            '', ''
+        ]);
+    });
+});
+
 describe('.escape', () => {
     it('escapes for a URI.', () => {
         expect(Strings.escape('why? x=hello world', Strings.EscapeMethod.URI)).toBe('why%3F%20x%3Dhello%20world');

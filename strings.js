@@ -21,6 +21,32 @@ const Strings = {
     },
 
     /**
+     * Performs a smart-split operation to split the string using any given separators and trimming whitespace for
+     * each value. This allows for mixed-inputs of separate values to be easily processed. 
+     * Any empty values are omitted.
+     * 
+     * @param {String} input - The string to be split.
+     * @param {Boolean} [trim=true] - Indicates whitespace should be removed from each split value (default = `true`).
+     * @param {...String} [separators] - Spread of seperating strings/characters. Defaults to `",", "\n", ";", "|"`.
+     * @returns {Array.<String>}
+     */
+    ssplit(input, trim = true, ...separators) {
+        if (input === null) {
+            return null;
+        } else if (typeof input !== 'string') {
+            throw new Error('Argument for the paramater "input" is not a string or null value type.');
+        }
+        if (!separators || separators.length === 0) {
+            separators = [',', '\n', ';', '|'];
+        }
+        let results = separators.reduce((a, c, ci) => ci ? a.map(v => v.split(c)).flat() : input.split(c), []);
+        if (trim) {
+            results.forEach(v => v.trim());
+        }
+        return results;
+    },
+
+    /**
      * Attempts to parse a regular expression literal string, potentially including flags.
      * @param {String|RegExp} input - The regular expression literal string.
      * @returns {RegExp}
