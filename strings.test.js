@@ -47,6 +47,7 @@ describe('.some', () => {
 
 describe('.slugify', () => {
     it('creates valid slugs.', () => {
+        expect(Strings.slugify(null)).toBe(null);
         expect(Strings.slugify('hello WORLD 123...')).toBe('hello-world-123');
         expect(Strings.slugify('Lala^**## Stuff')).toBe('lala-stuff');
         expect(Strings.slugify('Lala^**## Stuff-today,test')).toBe('lala-stuff-today-test');

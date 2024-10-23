@@ -104,6 +104,11 @@ const Strings = {
      * @returns {String}
      */
     slugify: function (input, sep, lower, camel) {
+        if (input === null) {
+            return null;
+        } else if (typeof input !== 'string') {
+            throw new Error('Argument for the paramater "input" is not a string or null value type.');
+        }
         if (typeof sep === 'undefined') {
             sep = '-';
         } else if (sep === null) {
