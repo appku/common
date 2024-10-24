@@ -5,7 +5,7 @@ describe('.ssplit', () => {
         expect(Strings.ssplit(null)).toBeNull();
     });
     it('splits complex lists cleanly.', () => {
-        expect(Strings.ssplit('this;is,an\ninput,of,     sorts; or;is it;;;,,,')).toEqual([
+        expect(Strings.ssplit('this;is,an\ninput,of,     sorts\r\n or;is it;;;,,,')).toEqual([
             'this', 'is', 'an',
             'input', 'of', 'sorts',
             'or', 'is it', '',
