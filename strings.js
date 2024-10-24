@@ -41,7 +41,9 @@ const Strings = {
         }
         let results = separators.reduce((a, c, ci) => ci ? a.map(v => v.split(c)).flat() : input.split(c), []);
         if (trim) {
-            results.forEach(v => v.trim());
+            for (let i = 0; i < results.length; i++) {
+                results[i] = results[i].trim();
+            }
         }
         return results;
     },
