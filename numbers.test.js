@@ -36,3 +36,36 @@ describe('.roundEnergy', () => {
         }
     });
 });
+
+describe('.sign', () => {
+    it('handles nulls.', () => {
+        expect(Numbers.sign(null)).toBe('');
+    });
+    it('handles 0s.', () => {
+        expect(Numbers.sign(0)).toBe('');
+    });
+    it('handles bad number types.', () => {
+        expect(Numbers.sign(undefined)).toBeNaN();
+        expect(Numbers.sign('whee')).toBeNaN();
+        expect(Numbers.sign('10')).toBeNaN();
+        expect(Numbers.sign('1.4')).toBeNaN();
+        expect(Numbers.sign(true)).toBeNaN();
+        expect(Numbers.sign(new Date())).toBeNaN();
+    });
+    it('handles positive numbers.', () => {
+        for (let x = 1; x < 10000; x++) {
+            expect(Numbers.sign(x)).toBe('+');
+        }
+        for (let x = 1; x < 1000; x += 0.123) {
+            expect(Numbers.sign(x)).toBe('+');
+        }
+    });
+    it('handles negative numbers.', () => {
+        for (let x = -1; x > -10000; x--) {
+            expect(Numbers.sign(x)).toBe('-');
+        }
+        for (let x = -1; x > -1000; x -= 0.123) {
+            expect(Numbers.sign(x)).toBe('-');
+        }
+    });
+});
