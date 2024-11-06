@@ -28,17 +28,29 @@ const Numbers = {
      * @returns {String}
      */
     sign(value) {
-        if (value === 0 || value === null) {
+        let vtype = typeof value;
+        if (vtype === 'object' && typeof value?.toNumber === 'function') {
+            //handle specialized numeric frameworks like Decimal.js
+            value = value.toNumber();
+            vtype = typeof value;
+        }
+        if (value == 0 || value === null) {
             return '';
-        }
-        if (typeof value === 'number' && Number.isNaN(value) === false) {
-            if (value > 0) {
-                return '+';
-            } else {
-                return '-';
+        } else if (vtype === 'boolean') {
+            value = (value >>> 0);
+        } else if (vtype === 'string') {
+            value = parseInt(value);
+            if (Number.isNaN(value)) {
+                return NaN;
             }
+        } else if (vtype !== 'number' || Number.isNaN(value)) {
+            return NaN;
         }
-        return NaN;
+        if (value > 0) {
+            return '+';
+        } else {
+            return '-';
+        }
     }
 
 };

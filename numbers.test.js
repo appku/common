@@ -44,12 +44,26 @@ describe('.sign', () => {
     it('handles 0s.', () => {
         expect(Numbers.sign(0)).toBe('');
     });
+    it('handles frameworks.', () => {
+        let numbertype = {
+            toNumber: () => 5
+        };
+        expect(Numbers.sign(numbertype)).toBe('+');
+    });
+    it('handles booleans.', () => {
+        expect(Numbers.sign(true)).toBe('+');
+        expect(Numbers.sign(false)).toBe('');
+    });
+    it('handles number-like strings.', () => {
+        expect(Numbers.sign('10')).toBe('+');
+        expect(Numbers.sign('10.44')).toBe('+');
+        expect(Numbers.sign('0')).toBe('');
+        expect(Numbers.sign('-10')).toBe('-');
+        expect(Numbers.sign('-10.44')).toBe('-');
+    });
     it('handles bad number types.', () => {
         expect(Numbers.sign(undefined)).toBeNaN();
         expect(Numbers.sign('whee')).toBeNaN();
-        expect(Numbers.sign('10')).toBeNaN();
-        expect(Numbers.sign('1.4')).toBeNaN();
-        expect(Numbers.sign(true)).toBeNaN();
         expect(Numbers.sign(new Date())).toBeNaN();
     });
     it('handles positive numbers.', () => {
