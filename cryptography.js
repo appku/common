@@ -51,6 +51,16 @@ class Cryptography {
     }
 
     /**
+     * Generates a public and private key for the given algorithm.
+     * @param {String} algorithm - Can be 'rsa’, ‘dsa’, ‘ec’, ‘ed25519’, ‘ed448’, ‘x25519’, ‘x448’, or ‘dh’.
+     * @returns {crypto.KeyPairSyncResult.<String, String> | crypto.KeyPairKeyObjectResult}
+     */
+    static keypair(algorithm) {
+        let pair = crypto.generateKeyPairSync(algorithm);
+        return pair;
+    }
+
+    /**
      * Validates the class properties.
      * @private
      */
@@ -229,11 +239,11 @@ class Cryptography {
      * @param {String} [salt] - A random salt value.
      * @returns {String}
      */
-    async hashText(text, salt) {
+    hashText(text, salt) {
         if (text === null) {
             return null;
         }
-        let digest = await this.hashBuffer(Buffer.from(text, this.encoding), salt);
+        let digest = this.hashBuffer(Buffer.from(text, this.encoding), salt);
         return digest.toString(this.outputEncoding);
     }
 
@@ -243,7 +253,7 @@ class Cryptography {
      * @param {String} [salt] - A random salt value.
      * @returns {Buffer}
      */
-    async hashBuffer(buffer, salt) {
+    hashBuffer(buffer, salt) {
         //validations & escapes
         if (buffer === null) {
             return null;
@@ -266,7 +276,7 @@ class Cryptography {
      * Creates a message digest of the input text using the current hashing algorithm.
      * @param {String} filePath - The file path pointing to the file to hash.
      * @param {String} [salt] - A random salt value.
-     * @returns {Buffer}
+     * @returns {Promise.<Buffer>}
      */
     async hashFile(filePath, salt) {
         if (salt && typeof salt !== 'string') {
@@ -294,39 +304,54 @@ class Cryptography {
     /**
      * Returns the signature of text using the given secret as a key with the hash algorithm.
      * @param {String} text - The text of data to sign.
-     * @param {String|Buffer} secret - The secret to used as a key for the signature generation.
+     * @param {String|Buffer} secretOrPrivateKey - The secret to used as a key for the signature generation. By default
+     * this is a shared secret, however, if `asymmetric` is `true` then it should represent a private key from a
+     * supported asymmetric algorithm (see #keypair function).
+     * @param {Boolean} [asymmetric=false] - Indicates a private key is provided and it's asymmetric algorithm should
+     * be used for signing.
      * @returns {String}
      */
-    async signText(text, secret) {
+    signText(text, secretOrPrivateKey, asymmetric) {
         if (text === null) {
             return null;
         }
-        let sig = await this.signBuffer(Buffer.from(text, this.encoding), secret);
+        let sig = this.signBuffer(Buffer.from(text, this.encoding), secretOrPrivateKey, asymmetric);
         return sig.toString(this.outputEncoding);
     }
 
     /**
      * Verifies the signature of a given text and secret and returns a boolean indicating success.
      * @param {String} text - The buffer of data that was signed.
-     * @param {String|Buffer} secret - The secret that was used as a key for the signature generation.
+     * @param {String|Buffer} secretOrPublicKey - The secret to used as a key for the signature verification. By default
+     * this is a shared secret, however, if `asymmetric` is `true` then it should represent a *public* key from a
+     * supported asymmetric algorithm (see #keypair function).
      * @param {String} signature - The signature expected.
+     * @param {Boolean} [asymmetric=false] - Indicates a public key is provided and it's asymmetric algorithm should
+     * be used for verification. Note that if the public key is invalid, a `false` is automatically returned.
      * @returns {Boolean}
      */
-    async verifyText(text, secret, signature) {
+    verifyText(text, secretOrPublicKey, signature, asymmetric) {
         if (text === null) {
             return null;
         }
-        return this.verifyBuffer(Buffer.from(text, this.encoding), secret, Buffer.from(signature, this.outputEncoding));
+        return this.verifyBuffer(Buffer.from(text, this.encoding), secretOrPublicKey, Buffer.from(signature, this.outputEncoding), asymmetric);
     }
 
     /**
      * Returns the signature of a buffer using the given secret as a key with the hash algorithm.
      * @param {Buffer} buffer - The buffer of data to sign.
-     * @param {String|Buffer} secret - The secret to used as a key for the signature generation.
+     * @param {String|Buffer} secretOrPrivateKey - The secret to used as a key for the signature generation. By default
+     * this is a shared secret, however, if `asymmetric` is `true` then it should represent a private key from a
+     * supported asymmetric algorithm (see #keypair function).
+     * @param {Boolean} [asymmetric=false] - Indicates a private key is provided and it's asymmetric algorithm should
+     * be used for signing.
      * @returns {Buffer}
      */
-    async signBuffer(buffer, secret) {
-        return crypto.createHmac(this.hashAlgorithm, secret)
+    signBuffer(buffer, secretOrPrivateKey, asymmetric) {
+        if (asymmetric) {
+            return crypto.sign(null, buffer, secretOrPrivateKey);
+        }
+        return crypto.createHmac(this.hashAlgorithm, secretOrPrivateKey)
             .update(buffer)
             .digest();
     }
@@ -334,12 +359,23 @@ class Cryptography {
     /**
      * Verifies the signature of a given buffer and secret and returns a boolean indicating success.
      * @param {Buffer} buffer - The buffer of data that was signed.
-     * @param {String|Buffer} secret - The secret that was used as a key for the signature generation.
+     * @param {String|Buffer} secretOrPublicKey - The secret to used as a key for the signature verification. By default
+     * this is a shared secret, however, if `asymmetric` is `true` then it should represent a *public* key from a
+     * supported asymmetric algorithm (see #keypair function).
      * @param {Buffer} signature - The signature expected.
+     * @param {Boolean} [asymmetric=false] - Indicates a public key is provided and it's asymmetric algorithm should
+     * be used for verification. Note that if the public key is invalid, a `false` is automatically returned.
      * @returns {Boolean}
      */
-    async verifyBuffer(buffer, secret, signature) {
-        let sig = await this.signBuffer(buffer, secret);
+    verifyBuffer(buffer, secretOrPublicKey, signature, asymmetric) {
+        if (asymmetric) {
+            try {
+                return crypto.verify(null, buffer, secretOrPublicKey, signature);
+            } catch (err) {
+                return false;
+            }
+        }
+        let sig = this.signBuffer(buffer, secretOrPublicKey);
         if (sig.byteLength !== signature.byteLength) {
             return false;
         }

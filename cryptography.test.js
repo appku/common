@@ -154,7 +154,7 @@ describe('file hashing', () => {
     }
 });
 
-describe('buffer signature and verification', () => {
+describe('symmetric buffer signature and verification', () => {
     for (let hashAlgorithm of hashAlgorithms) {
         if (hashAlgorithm !== null) {
             for (let encoding of encodings) {
@@ -165,16 +165,16 @@ describe('buffer signature and verification', () => {
                             let buf = Buffer.from('test123', encoding);
                             let key = 'keyABC';
                             it(`generates signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
-                                let sig = await c.signBuffer(buf, key);
+                                let sig = c.signBuffer(buf, key);
                                 expect(Buffer.isBuffer(sig)).toBe(true);
                             });
                             it(`verifies signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
-                                let sig = await c.signBuffer(buf, key);
-                                let verified = await c.verifyBuffer(buf, key, sig);
+                                let sig = c.signBuffer(buf, key);
+                                let verified = c.verifyBuffer(buf, key, sig);
                                 expect(verified).toBe(true);
-                                verified = await c.verifyBuffer(buf, 'bad_key987', sig);
+                                verified = c.verifyBuffer(buf, 'bad_key987', sig);
                                 expect(verified).toBe(false);
-                                verified = await c.verifyBuffer(buf, key, Buffer.from('hello'));
+                                verified = c.verifyBuffer(buf, key, Buffer.from('hello'));
                                 expect(verified).toBe(false);
                             });
                         }
@@ -185,7 +185,7 @@ describe('buffer signature and verification', () => {
     }
 });
 
-describe('text signature and verification', () => {
+describe('symmetric text signature and verification', () => {
     for (let hashAlgorithm of hashAlgorithms) {
         if (hashAlgorithm !== null) {
             for (let encoding of encodings) {
@@ -196,17 +196,81 @@ describe('text signature and verification', () => {
                             let text = 'test123';
                             let key = 'keyABC';
                             it(`generates signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
-                                let sig = await c.signText(text, key);
+                                let sig = c.signText(text, key);
                                 expect(typeof sig).toBe('string');
                                 expect(sig.length).toBeGreaterThan(0);
                             });
                             it(`verifies signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
-                                let sig = await c.signText(text, key);
-                                let verified = await c.verifyText(text, key, sig);
+                                let sig = c.signText(text, key);
+                                let verified = c.verifyText(text, key, sig);
                                 expect(verified).toBe(true);
-                                verified = await c.verifyText(text, 'bad_key987', sig);
+                                verified = c.verifyText(text, 'bad_key987', sig);
                                 expect(verified).toBe(false);
-                                verified = await c.verifyText(text, key, 'hello');
+                                verified = c.verifyText(text, key, 'hello');
+                                expect(verified).toBe(false);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+
+describe('asymmetric buffer signature and verification', () => {
+    for (let hashAlgorithm of hashAlgorithms) {
+        if (hashAlgorithm !== null) {
+            for (let encoding of encodings) {
+                if (encoding !== null) {
+                    for (let outputEncoding of outputEncodings) {
+                        if (outputEncoding !== null) {
+                            let keypair = Cryptography.keypair('ed25519');
+                            // console.log(keypair.privateKey.export({type: 'pkcs8', format:'pem'}), keypair.publicKey.export({type: 'spki', format:'pem'}));
+                            let c = new Cryptography(null, hashAlgorithm, encoding, outputEncoding);
+                            let buf = Buffer.from('test123', encoding);
+                            it(`generates signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
+                                let sig = c.signBuffer(buf, keypair.privateKey, true);
+                                expect(Buffer.isBuffer(sig)).toBe(true);
+                            });
+                            it(`verifies signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
+                                let sig = c.signBuffer(buf, keypair.privateKey, true);
+                                let verified = c.verifyBuffer(buf, keypair.publicKey, sig, true);
+                                expect(verified).toBe(true);
+                                verified = c.verifyBuffer(buf, 'bad_key987', sig, true);
+                                expect(verified).toBe(false);
+                                verified = c.verifyBuffer(buf, keypair.publicKey, Buffer.from('hello'), true);
+                                expect(verified).toBe(false);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+
+describe('asymmetric text signature and verification', () => {
+    for (let hashAlgorithm of hashAlgorithms) {
+        if (hashAlgorithm !== null) {
+            for (let encoding of encodings) {
+                if (encoding !== null) {
+                    for (let outputEncoding of outputEncodings) {
+                        if (outputEncoding !== null) {
+                            let keypair = Cryptography.keypair('ed25519');
+                            let c = new Cryptography(null, hashAlgorithm, encoding, outputEncoding);
+                            let text = 'test123';
+                            it(`generates signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
+                                let sig = c.signText(text, keypair.privateKey, true);
+                                expect(typeof sig).toBe('string');
+                                expect(sig.length).toBeGreaterThan(0);
+                            });
+                            it(`verifies signature using  "${hashAlgorithm}" hash algorithm, "${encoding}" encoding, and "${outputEncoding}" output encoding.`, async () => {
+                                let sig = c.signText(text, keypair.privateKey, true);
+                                let verified = c.verifyText(text, keypair.publicKey, sig, true);
+                                expect(verified).toBe(true);
+                                verified = c.verifyText(text, 'bad_key987', sig, true);
+                                expect(verified).toBe(false);
+                                verified = c.verifyText(text, keypair.publicKey, 'hello', true);
                                 expect(verified).toBe(false);
                             });
                         }
