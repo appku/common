@@ -61,6 +61,37 @@ class Cryptography {
     }
 
     /**
+     * Converts a hexidecimal string containing a private key into a key object.
+     * @param {String} pkValue - The hexidecimal private key value.
+     * @param {crypto.KeyType} type - The private key type.
+     * @param {crypto.KeyFormat} format - The private key format.
+     * @returns {crypto.KeyObject}
+     */
+    static privateKeyFromString(pkValue, type, format) {
+        let token = Buffer.from(pkValue, 'hex');
+        return crypto.createPrivateKey({
+            key: token,
+            format: format,
+            type: type
+        });
+    }
+
+    /**
+     * Generates the public key from a given private key.
+     * @param {crypto.KeyObject} pk - The private key.
+     * @param {crypto.KeyType} type - The private key type.
+     * @param {crypto.KeyFormat} format - The private key format.
+     * @returns {crypto.KeyObject}
+     */
+    static publicKeyFromPrivateKey(pk, type, format) {
+        return crypto.createPublicKey({
+            key: pk,
+            format: format,
+            type: type
+        });
+    }
+
+    /**
      * Validates the class properties.
      * @private
      */
