@@ -1,6 +1,6 @@
 {
     "name": "@appku/common",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "AppKu's official public common library of utilities.",
     "repository": {
         "type": "git",
