@@ -1,4 +1,5 @@
 import Strings from './strings.js';
+import fs from 'fs/promises';
 
 describe('.ssplit', () => {
     it('handles nulls.', () => {
@@ -173,5 +174,18 @@ describe('.title', () => {
     });
     it('captalizes diacritics.', () => {
         expect(Strings.title('ångus St3ak is\' gÚÚd!')).toBe('Ångus St3ak Is\' Gúúd!');
+    });
+});
+
+describe('.strip', () => {
+    it('removes markdown.', async () => {
+        let successDocument = await fs.readFile('./test/strings-strip-markdown.txt', 'utf-8');
+        let test = await fs.readFile('./test/strings-strip.md', 'utf-8');
+        expect(Strings.strip(test, Strings.StripFormat.MARKDOWN)).toBe(successDocument);
+    });
+    it('removes html.', async () => {
+        let successDocument = await fs.readFile('./test/strings-strip-html.txt', 'utf-8');
+        let test = await fs.readFile('./test/strings-strip.html', 'utf-8');
+        expect(Strings.strip(test, Strings.StripFormat.HTML)).toBe(successDocument);
     });
 });

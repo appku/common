@@ -14,9 +14,7 @@ const Compare = {
      * @returns {Boolean}
      */
     same(source, target) {
-        if (source === null && target === null) {
-            return true;
-        } else if (source === target) { //we have strict equality already, return true!
+        if (source === target) { //we have strict equality already, return true!
             return true;
         } else if (source instanceof Date && target instanceof Date) {
             return source.toISOString() === target.toISOString();

@@ -1,5 +1,8 @@
 import pluralize from './pluralize/pluralize.js';
 
+/**
+ * @module
+ */
 const Strings = {
 
     /**
@@ -274,6 +277,156 @@ const Strings = {
             (word) => {
                 return word.replace(/^./, (firstLetter) => firstLetter.toUpperCase());
             });
+    },
+
+    /**
+     * Removes markdown or HTML formatting from the specified text - attempting to keep the displayed text content.
+     * This also converts some escaped entities back to their original characters.
+     * @param {String} input - The text to strip markdown formatting from.
+     * @param {Strings.StripFormat} format - The format to strip from the text.
+     * @returns {String}
+     */
+    strip: function (input, format) {
+        if (input && typeof input === 'string') {
+            if (!format || format === Strings.StripFormat.MARKDOWN) {
+                input = input
+                    .replace(/#{1,}\s*(.+)$/gm, '$1')
+                    .replace(/~~(.+)~~$/gm, '(redacted)')
+                    .replace(/_{1,}|\*|~|!?(?:\[([^\]]*)\]\([^)]*\))/gm, '$1')
+                    .replace(/\n{2,}/gm, '\n\n') //collapse multiple newlines
+                    .trim();
+            }
+            if (format === Strings.StripFormat.HTML) {
+                input = input
+                    .replace(/<a.*href=['"]![^>]*>(?:.|\r|\n)*?<\/a>/gm, '') //strip macro HTML links
+                    .replace(/<li([^>]*)>/gi, '- ') //convert list items to dashes
+                    .replace(/<[^>]*>?/gm, '') //strip all html
+                    .replace(/^ +| +$/gm, '') //remove leading/trailing spaces
+                    .replace(/\n{2,}/gm, '\n\n') //collapse multiple newlines
+                    .trim();
+            }
+            input = input
+                .replace(/&OElig;/g, 'Œ')
+                .replace(/&oelig;/g, 'œ')
+                .replace(/&Scaron;/g, 'Š')
+                .replace(/&scaron;/g, 'š')
+                .replace(/&Yuml;/g, 'Ÿ')
+                .replace(/&fnof;/g, 'ƒ')
+                .replace(/&circ;/g, 'ˆ')
+                .replace(/&tilde;/g, '˜')
+                .replace(/&ensp;/g, ' ')
+                .replace(/&emsp;/g, ' ')
+                .replace(/&thinsp;/g, ' ')
+                .replace(/&zwnj;/g, '‌')
+                .replace(/&zwj;/g, '‍')
+                .replace(/&ndash;/g, '–')
+                .replace(/&mdash;/g, '—')
+                .replace(/&lsquo;/g, '‘')
+                .replace(/&rsquo;/g, '’')
+                .replace(/&sbquo;/g, '‚')
+                .replace(/&ldquo;/g, '“')
+                .replace(/&rdquo;/g, '”')
+                .replace(/&bdquo;/g, '„')
+                .replace(/&dagger;/g, '†')
+                .replace(/&Dagger;/g, '‡')
+                .replace(/&bull;/g, '•')
+                .replace(/&hellip;/g, '…')
+                .replace(/&permil;/g, '‰')
+                .replace(/&prime;/g, '′')
+                .replace(/&Prime;/g, '″')
+                .replace(/&lsaquo;/g, '‹')
+                .replace(/&rsaquo;/g, '›')
+                .replace(/&oline;/g, '‾')
+                .replace(/&euro;/g, '€')
+                .replace(/&trade;/g, '™')
+                .replace(/&larr;/g, '←')
+                .replace(/&uarr;/g, '↑')
+                .replace(/&rarr;/g, '→')
+                .replace(/&darr;/g, '↓')
+                .replace(/&harr;/g, '↔')
+                .replace(/&crarr;/g, '↵')
+                .replace(/&lceil;/g, '⌈')
+                .replace(/&rceil;/g, '⌉')
+                .replace(/&lfloor;/g, '⌊')
+                .replace(/&rfloor;/g, '⌋')
+                .replace(/&loz;/g, '◊')
+                .replace(/&spades;/g, '♠')
+                .replace(/&clubs;/g, '♣')
+                .replace(/&hearts;/g, '♥')
+                .replace(/&diams;/g, '♦')
+                .replace(/&forall;/g, '∀')
+                .replace(/&part;/g, '∂')
+                .replace(/&exist;/g, '∃')
+                .replace(/&empty;/g, '∅')
+                .replace(/&nabla;/g, '∇')
+                .replace(/&isin;/g, '∈')
+                .replace(/&notin;/g, '∉')
+                .replace(/&ni;/g, '∋')
+                .replace(/&prod;/g, '∏')
+                .replace(/&sum;/g, '∑')
+                .replace(/&minus;/g, '−')
+                .replace(/&lowast;/g, '∗')
+                .replace(/&radic;/g, '√')
+                .replace(/&prop;/g, '∝')
+                .replace(/&infin;/g, '∞')
+                .replace(/&ang;/g, '∠')
+                .replace(/&and;/g, '∧')
+                .replace(/&or;/g, '∨')
+                .replace(/&cap;/g, '∩')
+                .replace(/&cup;/g, '∪')
+                .replace(/&int;/g, '∫')
+                .replace(/&there4;/g, '∴')
+                .replace(/&sim;/g, '∼')
+                .replace(/&cong;/g, '≅')
+                .replace(/&asymp;/g, '≈')
+                .replace(/&ne;/g, '≠')
+                .replace(/&equiv;/g, '≡')
+                .replace(/&le;/g, '≤')
+                .replace(/&ge;/g, '≥')
+                .replace(/&sub;/g, '⊂')
+                .replace(/&sup;/g, '⊃')
+                .replace(/&nsub;/g, '⊄')
+                .replace(/&sube;/g, '⊆')
+                .replace(/&supe;/g, '⊇')
+                .replace(/&oplus;/g, '⊕')
+                .replace(/&otimes;/g, '⊗')
+                .replace(/&perp;/g, '⊥')
+                .replace(/&sdot;/g, '⋅')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&iexcl;/g, '¡')
+                .replace(/&cent;/g, '¢')
+                .replace(/&pound;/g, '£')
+                .replace(/&curren;/g, '¤')
+                .replace(/&yen;/g, '¥')
+                .replace(/&brvbar;/g, '¦')
+                .replace(/&sect;/g, '§')
+                .replace(/&uml;/g, '¨')
+                .replace(/&copy;/g, '©')
+                .replace(/&ordf;/g, 'ª')
+                .replace(/&laquo;/g, '«')
+                .replace(/&not;/g, '¬')
+                .replace(/&shy;/g, '­')
+                .replace(/&reg;/g, '®')
+                .replace(/&macr;/g, '¯')
+                .replace(/&deg;/g, '°')
+                .replace(/&plusmn;/g, '±')
+                .replace(/&sup2;/g, '²')
+                .replace(/&sup3;/g, '³')
+                .replace(/&acute;/g, '´')
+                .replace(/&micro;/g, 'µ')
+                .replace(/&para;/g, '¶')
+                .replace(/&cedil;/g, '¸')
+                .replace(/&sup1;/g, '¹')
+                .replace(/&ordm;/g, 'º')
+                .replace(/&raquo;/g, '»')
+                .replace(/&frac14;/g, '¼')
+                .replace(/&frac12;/g, '½')
+                .replace(/&frac34;/g, '¾')
+                .replace(/&iquest;/g, '¿')
+                .replace(/&times;/g, '×')
+                .replace(/&divide;/g, '÷');
+        }
+        return input;
     }
 
 };
@@ -285,6 +438,15 @@ const Strings = {
 Strings.EscapeMethod = {
     URI: 0,
     REGEXP: 1
+};
+
+/**
+ * @enum {Number}
+ * @readonly
+ */
+Strings.StripFormat = {
+    MARKDOWN: 'markdown',
+    HTML: 'html'
 };
 
 /** @exports Strings */

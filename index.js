@@ -6,10 +6,16 @@ import Strings from './strings.js';
 import Compare from './compare.js';
 
 export {
+    /** @type {Cryptography} */
     Cryptography,
+    /** @type {NodeEnvironment} */
     NodeEnvironment,
+    /** @type {Numbers} */
     Numbers,
+    /** @type {Randomization} */
     Randomization,
+    /** @type {Strings} */
     Strings,
+    /** @type {Compare} */
     Compare
 };
