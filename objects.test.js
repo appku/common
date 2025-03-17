@@ -18,6 +18,27 @@ describe('.toCamelCase', () => {
         };
         expect(Objects.toCamelCase(input)).toEqual(expectedOutput);
     });
+    it('converts object keys from snake_case to camelCase but retains always-caps words if non-first word in key.', () => {
+        const input = {
+            first_id: 'value1',
+            second_http: 'value2',
+            ftp: {
+                nested_key: 'nestedValue',
+                some_id: 133,
+                id_some: 323
+            }
+        };
+        const expectedOutput = {
+            firstID: 'value1',
+            secondHTTP: 'value2',
+            ftp: {
+                nestedKey: 'nestedValue',
+                someID: 133,
+                idSome: 323
+            }
+        };
+        expect(Objects.toCamelCase(input)).toEqual(expectedOutput);
+    });
     it('converts array of objects keys from snake_case to camelCase.', () => {
         const input = [
             { first_key: 'value1' },
@@ -209,6 +230,25 @@ describe('.flatten', () => {
             'a': 1,
             'bComma': 2,
             'bDongleElephant': 3
+        };
+        expect(Objects.flatten(input, '')).toEqual(expectedOutput);
+    });
+    it('flattens an object with a blank separator to camelCase handling words that are always in caps.', () => {
+        const input = {
+            a: 1,
+            b: {
+                id: 21,
+                dongle: {
+                    http: 3
+                }
+            },
+            id: 'hi'
+        };
+        const expectedOutput = {
+            a: 1,
+            bID: 21,
+            bDongleHTTP: 3,
+            id: 'hi'
         };
         expect(Objects.flatten(input, '')).toEqual(expectedOutput);
     });

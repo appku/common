@@ -1,3 +1,4 @@
+const ALWAYS_CAPS_REGEX = /id|url|uri|http|https|ftp/i;
 
 const Objects = {
     /**
@@ -11,7 +12,14 @@ const Objects = {
             return obj.map(v => Objects.toCamelCase(v));
         } else if (obj !== null && obj.constructor === Object) {
             return Object.keys(obj).reduce((result, key) => {
-                const camelCaseKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+                const camelCaseKey = key.replace(/_([^_]+)/g, (_, word) => {
+                    if (word.length) {
+                        if (ALWAYS_CAPS_REGEX.test(word)) {
+                            return word.toUpperCase();
+                        }
+                        return word.substring(0, 1).toUpperCase() + word.substring(1);
+                    }
+                });
                 result[camelCaseKey] = Objects.toCamelCase(obj[key]);
                 return result;
             }, {});
@@ -59,7 +67,11 @@ const Objects = {
                 const value = obj[key];
                 let newKey = prefix ? `${prefix}${separator}${key}` : key;
                 if (separator === '' || separator === null) { //no separator, make camelCase-like
-                    newKey = prefix ? `${prefix}${key.substring(0, 1).toUpperCase() + key.substring(1)}` : key;
+                    if (ALWAYS_CAPS_REGEX.test(key)) {
+                        newKey = prefix ? `${prefix}${key.toUpperCase()}` : key;
+                    } else {
+                        newKey = prefix ? `${prefix}${key.substring(0, 1).toUpperCase() + key.substring(1)}` : key;
+                    }
                 }
                 if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                     Objects.flatten(value, separator, newKey, result);
