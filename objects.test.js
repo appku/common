@@ -157,6 +157,21 @@ describe('.toSnakeCase', () => {
     });
 });
 
+describe('.isLiteral', () => {
+    it('returns true when object is an object literal.', () => {
+        expect(Objects.isLiteral({})).toEqual(true);
+        expect(Objects.isLiteral(Object.create({}))).toEqual(true);
+        expect(Objects.isLiteral(Object.create(null))).toEqual(true);
+        expect(Objects.isLiteral(new Object())).toEqual(true);
+    });
+    it('returns true when object is not an object literal.', () => {
+        expect(Objects.isLiteral(new Date())).toEqual(false);
+        expect(Objects.isLiteral([{}])).toEqual(false);
+        expect(Objects.isLiteral(null)).toEqual(false);
+        expect(Objects.isLiteral(undefined)).toEqual(false);
+    });
+});
+
 describe('.flatten', () => {
     it('flattens a simple object.', () => {
         const input = {
@@ -196,6 +211,30 @@ describe('.flatten', () => {
         const expectedOutput = {
             'a': 1,
             'b': [2, 3, { c: 4 }]
+        };
+        expect(Objects.flatten(input)).toEqual(expectedOutput);
+    });
+    it('flattens an object with other non-array, non-object, values.', () => {
+        let h = new Date();
+        const input = {
+            a: 1,
+            b: [2, 3, { c: 4 }],
+            c: true,
+            d: 'hello world',
+            e: {
+                f: null,
+                g: undefined,
+                h: h
+            }
+        };
+        const expectedOutput = {
+            a: 1,
+            b: [2, 3, { c: 4 }],
+            c: true,
+            d: 'hello world',
+            'e.f': null,
+            'e.g': undefined,
+            'e.h': h
         };
         expect(Objects.flatten(input)).toEqual(expectedOutput);
     });

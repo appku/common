@@ -47,6 +47,19 @@ const Objects = {
     },
 
     /**
+     * Returns true if the object is a plain object (literal object).
+     * @param {*} obj - The object to check.
+     * @returns {Boolean}
+     */
+    isLiteral: function (obj) {
+        return !!(
+            obj &&
+            Object.prototype.toString.call(obj) === '[object Object]' && (obj.constructor === Object ||
+                Object.getPrototypeOf(obj) === null)
+        );
+    },
+
+    /**
      * Flattens a recursive object.
      * @param {Object} obj - The object to flatten.
      * @param {String} [separator='.'] - The separator for the keys.
@@ -73,7 +86,7 @@ const Objects = {
                         newKey = prefix ? `${prefix}${key.substring(0, 1).toUpperCase() + key.substring(1)}` : key;
                     }
                 }
-                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                if (Objects.isLiteral(value)) {
                     Objects.flatten(value, separator, newKey, result);
                 } else {
                     result[newKey] = value;
