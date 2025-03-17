@@ -135,3 +135,110 @@ describe('.toSnakeCase', () => {
         expect(Objects.toSnakeCase(input)).toEqual(expectedOutput);
     });
 });
+
+describe('.flatten', () => {
+    it('flattens a simple object.', () => {
+        const input = {
+            a: 1,
+            b: 2,
+            c: 3
+        };
+        const expectedOutput = {
+            a: 1,
+            b: 2,
+            c: 3
+        };
+        expect(Objects.flatten(input)).toEqual(expectedOutput);
+    });
+    it('flattens a nested object.', () => {
+        const input = {
+            a: 1,
+            b: {
+                c: 2,
+                d: {
+                    e: 3
+                }
+            }
+        };
+        const expectedOutput = {
+            'a': 1,
+            'b.c': 2,
+            'b.d.e': 3
+        };
+        expect(Objects.flatten(input)).toEqual(expectedOutput);
+    });
+    it('flattens an object with arrays.', () => {
+        const input = {
+            a: 1,
+            b: [2, 3, { c: 4 }]
+        };
+        const expectedOutput = {
+            'a': 1,
+            'b': [2, 3, { c: 4 }]
+        };
+        expect(Objects.flatten(input)).toEqual(expectedOutput);
+    });
+    it('flattens an object with a custom separator.', () => {
+        const input = {
+            a: 1,
+            b: {
+                c: 2,
+                d: {
+                    e: 3
+                }
+            }
+        };
+        const expectedOutput = {
+            'a': 1,
+            'b-c': 2,
+            'b-d-e': 3
+        };
+        expect(Objects.flatten(input, '-')).toEqual(expectedOutput);
+    });
+    it('flattens an object with a blank separator to camelCase.', () => {
+        const input = {
+            a: 1,
+            b: {
+                comma: 2,
+                dongle: {
+                    elephant: 3
+                }
+            }
+        };
+        const expectedOutput = {
+            'a': 1,
+            'bComma': 2,
+            'bDongleElephant': 3
+        };
+        expect(Objects.flatten(input, '')).toEqual(expectedOutput);
+    });
+    it('flattens an object with a prefix.', () => {
+        const input = {
+            a: 1,
+            b: {
+                c: 2
+            }
+        };
+        const expectedOutput = {
+            'prefix.a': 1,
+            'prefix.b.c': 2
+        };
+        expect(Objects.flatten(input, '.', 'prefix')).toEqual(expectedOutput);
+    });
+    it('returns an empty object if input is an empty object.', () => {
+        const input = {};
+        const expectedOutput = {};
+        expect(Objects.flatten(input)).toEqual(expectedOutput);
+    });
+    it('returns a null if input is null.', () => {
+        expect(Objects.flatten(null)).toBeNull();
+    });
+    it('returns a undefined if input is undefined.', () => {
+        expect(Objects.flatten(undefined)).toBeUndefined();
+    });
+    it('returns the same value if input is not an object.', () => {
+        expect(Objects.flatten('string')).toBe('string');
+        expect(Objects.flatten(123)).toBe(123);
+        expect(Objects.flatten(true)).toBe(true);
+    });
+});
