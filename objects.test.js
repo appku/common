@@ -253,7 +253,7 @@ describe('.flatten', () => {
             'b-c': 2,
             'b-d-e': 3
         };
-        expect(Objects.flatten(input, '-')).toEqual(expectedOutput);
+        expect(Objects.flatten(input, { separator: '-' })).toEqual(expectedOutput);
     });
     it('flattens an object with a blank separator to camelCase.', () => {
         const input = {
@@ -270,7 +270,7 @@ describe('.flatten', () => {
             'bComma': 2,
             'bDongleElephant': 3
         };
-        expect(Objects.flatten(input, '')).toEqual(expectedOutput);
+        expect(Objects.flatten(input, { separator: '' })).toEqual(expectedOutput);
     });
     it('flattens an object with a blank separator to camelCase handling words that are always in caps.', () => {
         const input = {
@@ -289,7 +289,28 @@ describe('.flatten', () => {
             bDongleHTTP: 3,
             id: 'hi'
         };
-        expect(Objects.flatten(input, '')).toEqual(expectedOutput);
+        expect(Objects.flatten(input, { separator: '' })).toEqual(expectedOutput);
+    });
+    it('flattens an object, removing any excised keys', () => {
+        const input = {
+            a: 1,
+            dongle: {
+                test: 1
+            },
+            b: {
+                id: 21,
+                dongle: {
+                    http: 3
+                }
+            },
+            id: 'hi'
+        };
+        const expectedOutput = {
+            a: 1,
+            bID: 21,
+            id: 'hi'
+        };
+        expect(Objects.flatten(input, { separator: '', excise: ['dongle'] })).toEqual(expectedOutput);
     });
     it('flattens an object with a prefix.', () => {
         const input = {

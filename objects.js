@@ -62,24 +62,30 @@ const Objects = {
     /**
      * Flattens a recursive object.
      * @param {Object} obj - The object to flatten.
-     * @param {String} [separator='.'] - The separator for the keys.
+     * @param {{ separator:String, excise:Array.<String> }} [options] - The options for the flattening operation.
      * @param {String} [prefix=''] - The prefix for the keys.
      * @param {Object} [result={}] - The result object.
      * @returns {Object} - The flattened object.
      */
-    flatten: function (obj, separator = '.', prefix = '', result) {
+    flatten: function (obj, options, prefix = '', result) {
         if (obj === null || typeof obj !== 'object') {
             if (typeof result !== 'undefined') {
                 return result;
             }
             return obj;
         }
+        if (!options) {
+            options = { separator: '.' };
+        }
         result = result || {};
         for (const key in obj) {
             if (Object.prototype.hasOwnProperty.call(obj, key)) {
                 const value = obj[key];
-                let newKey = prefix ? `${prefix}${separator}${key}` : key;
-                if (separator === '' || separator === null) { //no separator, make camelCase-like
+                if (options?.excise && options.excise.includes(key)) {
+                    continue; //skip excised keys
+                }
+                let newKey = prefix ? `${prefix}${options?.separator ?? '.'}${key}` : key;
+                if (options.separator === '' || options.separator === null) { //no separator, make camelCase-like
                     if (ALWAYS_CAPS_REGEX.test(key)) {
                         newKey = prefix ? `${prefix}${key.toUpperCase()}` : key;
                     } else {
@@ -87,7 +93,7 @@ const Objects = {
                     }
                 }
                 if (Objects.isLiteral(value)) {
-                    Objects.flatten(value, separator, newKey, result);
+                    Objects.flatten(value, options, newKey, result);
                 } else {
                     result[newKey] = value;
                 }
